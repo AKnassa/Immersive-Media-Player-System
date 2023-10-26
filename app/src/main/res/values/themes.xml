@@ -1,0 +1,23 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.MeteorProject" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- ... other items ... -->
+        <item name="actionBarStyle">@style/CustomActionBar</item>
+    </style>
+
+    <style name="AppTitleFontStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:fontFamily">@font/robotoappname</item>
+    </style>
+    <style name="CustomActionBar" parent="Widget.AppCompat.ActionBar">
+        <item name="titleTextStyle">@style/AppTitleFontStyle</item>
+        <item name="android:background">#FFFFFF</item>
+    </style>
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+        <!-- Customize the pop-up menu styles here if needed -->
+    </style>
+
+
+
+
+    <style name="Theme.MeteorProject" parent="Base.Theme.MeteorProject" />
+</resources>
