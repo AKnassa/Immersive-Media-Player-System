@@ -270,6 +270,7 @@ public class PlayerFragment extends Fragment {
             public void onClick(View v) {
                 if (isPlaying) {
                     playIcon.setImageResource(R.drawable.round_play_arrow_24);
+                    Log.d("FlagChk", "Executing Play function");
                     sendStringToUnity(unityServerIp, "pause");
                     videoView.pause(); // Pause the video
                 } else {
@@ -366,9 +367,12 @@ public class PlayerFragment extends Fragment {
 
     public void sendStringToUnity(String serverIp, String message) {
         new Thread(new Runnable() {
+
             @Override
             public void run() {
                 try {
+                    Log.d("TCPFlagChk", "Initiating connection");
+                    Log.d("SendToUnity", "Sending message to Unity: " + message); // Log the message
                     int serverPort = 8099; //Port
                     Socket socket = new Socket(serverIp, serverPort);
                     OutputStream outputStream = socket.getOutputStream();
