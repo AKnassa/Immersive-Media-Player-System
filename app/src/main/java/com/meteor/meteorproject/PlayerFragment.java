@@ -1,8 +1,11 @@
 package com.meteor.meteorproject;
-
+//sendStringToUnity(unityServerIp, "jumptotime");
+//sendStringToUnity(unityServerIp, "volume");
+//sendStringToUnity(unityServerIp, "file");
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,12 +117,22 @@ public class PlayerFragment extends Fragment {
     private MediaController mediaController;
     private List<Video> videos;
 
+    //String unityServerIp = "169.254.157.182"; // Set the IP address dynamically
+    //String unityServerIp = "10.155.180.218"; // Set the IP address dynamically
     String unityServerIp = "192.168.0.187"; // Set the IP address dynamically
 
     private boolean isLocked = false;  // Add this to keep track of the lock state
     private boolean isPlaying = true;  // to keep track of play/pause state
-
     private boolean isSwitchOn = false;  // default state is off
+
+    //Files with their IDs.
+    private static final SparseArray<String> videoResourceMap = new SparseArray<>();
+
+    static {
+        videoResourceMap.put(R.raw.video1, "video1");
+        videoResourceMap.put(R.raw.video2, "video2");
+        videoResourceMap.put(R.raw.video3, "video3");
+    }
 
     @Nullable
     @Override
@@ -149,6 +162,10 @@ public class PlayerFragment extends Fragment {
         listView.setOnItemClickListener((parent, view1, position, id) -> {
             Video selectedVideo = videos.get(position);
             playVideo(selectedVideo);
+            //Select video
+            String sendFile = videoResourceMap.get(selectedVideo.getVideoResource());
+            Log.d("FlagChkSelectVideo", "Selected File: " + sendFile);
+            sendStringToUnity(unityServerIp, "file " + sendFile);
         });
 
         // Get the video file's resource identifier from the "res/raw" folder
@@ -157,6 +174,7 @@ public class PlayerFragment extends Fragment {
         // Set the video URI from the resource identifier
         String videoPath = "android.resource://" + requireActivity().getPackageName() + "/" + videoRawResourceId;
         videoView.setVideoURI(Uri.parse(videoPath));
+
 
         try {
             mediaPlayer.setDataSource(requireActivity(), Uri.parse(videoPath));
@@ -186,6 +204,7 @@ public class PlayerFragment extends Fragment {
     private void updateVolume() {
         if (mediaPlayer != null) {
             mediaPlayer.setVolume(currentVolume, currentVolume);
+            //sendStringToUnity(unityServerIp, "volume " + currentVolume);
         }
     }
     @Override
@@ -270,11 +289,12 @@ public class PlayerFragment extends Fragment {
             public void onClick(View v) {
                 if (isPlaying) {
                     playIcon.setImageResource(R.drawable.round_play_arrow_24);
-                    Log.d("FlagChk", "Executing Play function");
+                    //Log.d("FlagChk", "In Play function: sending message, pause");
                     sendStringToUnity(unityServerIp, "pause");
                     videoView.pause(); // Pause the video
                 } else {
                     playIcon.setImageResource(R.drawable.baseline_pause_24);
+                    //Log.d("FlagChk", "In Pause function: sending message, play");
                     sendStringToUnity(unityServerIp, "play");
                     videoView.start(); // Start or resume the video
                 }
@@ -306,6 +326,7 @@ public class PlayerFragment extends Fragment {
                 int currentPosition = videoView.getCurrentPosition();
                 int newPosition = Math.max(currentPosition - 10000, 0); // Rewind by 10 seconds (10,000 milliseconds)
                 videoView.seekTo(newPosition);
+                sendStringToUnity(unityServerIp, "rewind");
                 // If you have video controls, add your replay logic here
             }
         });
@@ -339,6 +360,12 @@ public class PlayerFragment extends Fragment {
                 // Seek the video to the calculated time
                 videoView.seekTo(seekTime);
 
+                // Calculate the time to seek to in seconds
+                int seekTimeInMilliseconds = (int) ((selectedTime / 100) * videoDuration);
+                int seekTimeInSeconds = seekTimeInMilliseconds / 1000; // Convert to seconds
+                //Log.d("FlagChkSeekBar", "Jump to: " + seekTimeInSeconds);
+                sendStringToUnity(unityServerIp, "jumptotime " + seekTimeInSeconds);
+
                 // Hide the button layout
                 buttonLayout.setVisibility(View.GONE);
             }
@@ -370,23 +397,27 @@ public class PlayerFragment extends Fragment {
 
             @Override
             public void run() {
+                Socket socket = null;
                 try {
-                    Log.d("TCPFlagChk", "Initiating connection");
-                    Log.d("SendToUnity", "Sending message to Unity: " + message); // Log the message
-                    int serverPort = 8099; //Port
-                    Socket socket = new Socket(serverIp, serverPort);
+                    Log.d("SendToUnity", "Sending message to Unity: " + message);
+                    int serverPort = 8099; // Port
+                    socket = new Socket(serverIp, serverPort);
                     OutputStream outputStream = socket.getOutputStream();
                     byte[] messageBytes = message.getBytes("UTF-8");
                     outputStream.write(messageBytes);
-                    outputStream.close();
-                    socket.close();
-
+                    outputStream.flush(); // Ensure the data is sent immediately
                     Log.d("SendToUnity", "Message sent to Unity: " + message);
-
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Log.e("SendToUnity", "Error sending message to Unity: " + e.getMessage());
-
+                    Log.e("SendToUnity", "Error message: " + e.getMessage());
+                } finally {
+                    if (socket != null) {
+                        try {
+                            socket.close(); // Close
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
         }).start();
