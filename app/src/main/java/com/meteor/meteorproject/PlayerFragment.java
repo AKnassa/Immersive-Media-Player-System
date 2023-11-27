@@ -18,6 +18,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 import android.widget.CompoundButton;
+import android.os.Handler;
 
 
 import androidx.annotation.NonNull;
@@ -112,13 +113,27 @@ public class PlayerFragment extends Fragment {
     private MediaController mediaController;
     private List<Video> videos;
     List<String> ipList = new ArrayList<>();
+    private com.google.android.material.progressindicator.LinearProgressIndicator progressBar;
+
+
+    // LiveBar:
+    private Handler handler = new Handler();
+    private Runnable updateProgressRunnable = new Runnable() {
+        @Override
+        public void run() {
+            updateProgressBar();
+            handler.postDelayed(this, 1000); // Update every second (adjust as needed)
+        }
+    };
+
     public PlayerFragment() {
         ipList.add("172.20.10.4");
         ipList.add("172.20.10.6");
-        ipList.add("172.20.10.7");
+        progressBar = null; // initialized in onCreateView
+
     }
     //    String unityServerIp = "192.168.0.187"; // Set the IP address dynamically
-    String unityServerIp = "172.20.10.3"; // Set the IP address dynamically
+    String unityServerIp = "192.168.0.203"; // Set the IP address dynamically
     //String unityServerIp1 = "172.20.10.7"; // Set the IP address dynamically
 
     private boolean isLocked = false;  // Add this to keep track of the lock state
@@ -139,6 +154,7 @@ public class PlayerFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_player, container, false);
+        progressBar = view.findViewById(R.id.progressBar);
 
         // Initialize VideoView
         videoView = view.findViewById(R.id.videoPlayer);
@@ -168,7 +184,10 @@ public class PlayerFragment extends Fragment {
             sendStringToUnity(unityServerIp, "file " + sendFile);
             //sendStringToUnity(unityServerIp1, "file " + sendFile);
 
+            updateNewVideoUI();
         });
+
+
 
         // Get the video file's resource identifier from the "res/raw" folder
         int videoRawResourceId = R.raw.video3; // Replace "your_video" with your actual video file name
@@ -194,6 +213,18 @@ public class PlayerFragment extends Fragment {
         return view;
     }
 
+    private void updateNewVideoUI() {
+        // Reset the seek bar
+        Slider seekBar = requireView().findViewById(R.id.seekBar);
+        seekBar.setValue(0);
+
+        // Update play/pause button
+        ImageButton playIcon = requireView().findViewById(R.id.playIcon);
+        playIcon.setImageResource(R.drawable.baseline_pause_24);
+
+        // Add more UI updates
+    }
+
     // Play the selected video in the VideoView
     private void playVideo(Video video) {
         videoView.pause();
@@ -206,7 +237,7 @@ public class PlayerFragment extends Fragment {
     private void updateVolume() {
         if (mediaPlayer != null) {
             mediaPlayer.setVolume(currentVolume, currentVolume);
-            //sendStringToUnity(unityServerIp, "volume " + currentVolume);
+            sendStringToUnity(unityServerIp, "volume " + currentVolume);
         }
     }
     @Override
@@ -216,6 +247,8 @@ public class PlayerFragment extends Fragment {
             mediaPlayer.release();
             mediaPlayer = null;
         }
+        //LiveBar: Stop updating the progress when the fragment is destroyed
+        handler.removeCallbacks(updateProgressRunnable);
     }
 
     private final View.OnClickListener lockIconClickListener = new View.OnClickListener() {
@@ -261,11 +294,14 @@ public class PlayerFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        final com.google.android.material.progressindicator.LinearProgressIndicator progressBar = view.findViewById(R.id.progressBar);
         final com.google.android.material.slider.Slider seekBar = view.findViewById(R.id.seekBar);
         final LinearLayout buttonLayout = view.findViewById(R.id.buttonLayout);
         final Button syncNowButton = view.findViewById(R.id.syncNowButton);
         final Button cancelButton = view.findViewById(R.id.cancelButton);
+        Slider volumeSlider = view.findViewById(R.id.volumeSlider);
+
+        // LiveBar: Start updating the progress
+        handler.post(updateProgressRunnable);
 
         // Store the original value of the Slider to reset it when "Cancel" is clicked
         final float[] originalValue = {seekBar.getValue()};
@@ -385,6 +421,15 @@ public class PlayerFragment extends Fragment {
             }
         });
 
+        volumeSlider.addOnChangeListener(new Slider.OnChangeListener() {
+            @Override
+            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
+                // Update the current volume and apply changes
+                currentVolume = value;
+                updateVolume();
+            }
+        });
+
         // "Sync Now" button functionality
         syncNowButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -405,6 +450,20 @@ public class PlayerFragment extends Fragment {
             }
         });
     }
+
+    private void updateProgressBar() {
+        if (videoView != null && progressBar != null) {
+            int currentPosition = videoView.getCurrentPosition();
+            int videoDuration = videoView.getDuration();
+
+            // Calculate progress percentage
+            int progress = (int) ((currentPosition * 100) / videoDuration);
+
+            // Update the progress bar
+            progressBar.setProgressCompat(progress, true);
+        }
+    }
+
 
     public void sendStringToUnity(String serverIp, String message) {
         new Thread(new Runnable() {
