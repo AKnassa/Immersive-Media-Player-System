@@ -1,7 +1,6 @@
 package com.meteor.meteorproject;
-//sendStringToUnity(unityServerIp, "jumptotime");
-//sendStringToUnity(unityServerIp, "volume");
-//sendStringToUnity(unityServerIp, "file");
+//sendStringToUnity(unityServerIp, "jumptotime");   //sendStringToUnity(unityServerIp, "volume");   //sendStringToUnity(unityServerIp, "file");
+
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.net.Uri;
-import android.os.Bundle;
 import android.widget.MediaController;
 import android.widget.VideoView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,12 +40,9 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
 
 class Video {
     String title;
@@ -116,10 +111,15 @@ public class PlayerFragment extends Fragment {
     private float currentVolume = 1.0f;
     private MediaController mediaController;
     private List<Video> videos;
-
-    //String unityServerIp = "169.254.157.182"; // Set the IP address dynamically
-    //String unityServerIp = "10.155.180.218"; // Set the IP address dynamically
-    String unityServerIp = "192.168.0.187"; // Set the IP address dynamically
+    List<String> ipList = new ArrayList<>();
+    public PlayerFragment() {
+        ipList.add("172.20.10.4");
+        ipList.add("172.20.10.6");
+        ipList.add("172.20.10.7");
+    }
+    //    String unityServerIp = "192.168.0.187"; // Set the IP address dynamically
+    String unityServerIp = "172.20.10.3"; // Set the IP address dynamically
+    //String unityServerIp1 = "172.20.10.7"; // Set the IP address dynamically
 
     private boolean isLocked = false;  // Add this to keep track of the lock state
     private boolean isPlaying = true;  // to keep track of play/pause state
@@ -166,6 +166,8 @@ public class PlayerFragment extends Fragment {
             String sendFile = videoResourceMap.get(selectedVideo.getVideoResource());
             Log.d("FlagChkSelectVideo", "Selected File: " + sendFile);
             sendStringToUnity(unityServerIp, "file " + sendFile);
+            //sendStringToUnity(unityServerIp1, "file " + sendFile);
+
         });
 
         // Get the video file's resource identifier from the "res/raw" folder
@@ -291,11 +293,20 @@ public class PlayerFragment extends Fragment {
                     playIcon.setImageResource(R.drawable.round_play_arrow_24);
                     //Log.d("FlagChk", "In Play function: sending message, pause");
                     sendStringToUnity(unityServerIp, "pause");
+                    for (String ipAddress : ipList) {
+                        // Do something with each IP address
+                        sendStringToUnity(ipAddress, "pause");
+                        Log.d("FlagChk", ipAddress+" play");
+
+                    }//sendStringToUnity(unityServerIp1, "pause");
                     videoView.pause(); // Pause the video
+                    mediaPlayer.pause();
+
                 } else {
                     playIcon.setImageResource(R.drawable.baseline_pause_24);
                     //Log.d("FlagChk", "In Pause function: sending message, play");
                     sendStringToUnity(unityServerIp, "play");
+                    //sendStringToUnity(unityServerIp1, "play");
                     videoView.start(); // Start or resume the video
                 }
                 isPlaying = !isPlaying;
@@ -327,6 +338,8 @@ public class PlayerFragment extends Fragment {
                 int newPosition = Math.max(currentPosition - 10000, 0); // Rewind by 10 seconds (10,000 milliseconds)
                 videoView.seekTo(newPosition);
                 sendStringToUnity(unityServerIp, "rewind");
+                //sendStringToUnity(unityServerIp1, "rewind");
+
                 // If you have video controls, add your replay logic here
             }
         });
@@ -365,6 +378,7 @@ public class PlayerFragment extends Fragment {
                 int seekTimeInSeconds = seekTimeInMilliseconds / 1000; // Convert to seconds
                 //Log.d("FlagChkSeekBar", "Jump to: " + seekTimeInSeconds);
                 sendStringToUnity(unityServerIp, "jumptotime " + seekTimeInSeconds);
+                //sendStringToUnity(unityServerIp1, "jumptotime " + seekTimeInSeconds);
 
                 // Hide the button layout
                 buttonLayout.setVisibility(View.GONE);
@@ -400,7 +414,7 @@ public class PlayerFragment extends Fragment {
                 Socket socket = null;
                 try {
                     Log.d("SendToUnity", "Sending message to Unity: " + message);
-                    int serverPort = 8099; // Port
+                    int serverPort = 5037; // Port
                     socket = new Socket(serverIp, serverPort);
                     OutputStream outputStream = socket.getOutputStream();
                     byte[] messageBytes = message.getBytes("UTF-8");
