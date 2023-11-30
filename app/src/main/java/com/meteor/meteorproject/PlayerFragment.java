@@ -48,16 +48,16 @@ class Video {
     String title;
     int thumbnailResource;
     String duration;
-    int videoResource;
+    String videoResource;
 
-    public Video(String title, int thumbnailResource, String duration, int videoResource) {
+    public Video(String title, int thumbnailResource, String duration, String videoResource) {
         this.title = title;
         this.thumbnailResource = thumbnailResource;
         this.duration = duration;
         this.videoResource = videoResource;
     }
 
-    public int getVideoResource() {
+    public String getVideoResource() {
         return videoResource;
     }
     // Add getters here if needed
@@ -126,8 +126,11 @@ public class PlayerFragment extends Fragment {
     };
 
     public PlayerFragment() {
-        ipList.add("172.20.10.3");
-        ipList.add("192.168.0.21");
+        //ipList.add("172.20.10.3");
+        //ipList.add("192.168.0.21")
+        ipList.add("192.168.0.24");
+        ipList.add("192.168.0.23");
+        ipList.add("192.168.0.20");
         progressBar = null; // initialized in onCreateView
     }
     //    String unityServerIp = "192.168.0.187"; // Set the IP address dynamically
@@ -145,6 +148,7 @@ public class PlayerFragment extends Fragment {
         videoResourceMap.put(R.raw.video1, "video1");
         videoResourceMap.put(R.raw.video2, "video2");
         videoResourceMap.put(R.raw.video3, "video3");
+        //videoResourceMap.put(R.raw.video4, "video4");
     }
 
     @Nullable
@@ -163,9 +167,10 @@ public class PlayerFragment extends Fragment {
         videoView.setMediaController(mediaController);
 
         videos = new ArrayList<>();
-        videos.add(new Video("Lecture 3", R.raw.v1, "5:20",R.raw.video1));
-        videos.add(new Video("Lecture 2", R.raw.v2, "5:20",R.raw.video2));
-        videos.add(new Video("Lecture 3", R.raw.v3, "5:20",R.raw.video3));
+        videos.add(new Video("Lecture 3", R.raw.v1, "5:20","/storage/emulated/0/video1.mp4"));
+        videos.add(new Video("Lecture 2", R.raw.v2, "5:20","/storage/emulated/0/video2.mp4"));
+        videos.add(new Video("Lecture 3", R.raw.v3, "5:20","/storage/emulated/0/video3.mp4"));
+        //videos.add(new Video("Lecture 4", R.raw.v4, "5:20",R.raw.video4));
 
         // Initialize the ListView and set an adapter
         ListView listView = view.findViewById(R.id.videoListView);
@@ -178,6 +183,7 @@ public class PlayerFragment extends Fragment {
             playVideo(selectedVideo);
             //Select video
             String sendFile = videoResourceMap.get(selectedVideo.getVideoResource());
+
             Log.d("FlagChkSelectVideo", "Selected File: " + sendFile);
             for (String sendCmd : ipList) {
                 sendStringToUnity(sendCmd, "file " + sendFile);
@@ -227,8 +233,7 @@ public class PlayerFragment extends Fragment {
     // Play the selected video in the VideoView
     private void playVideo(Video video) {
         videoView.pause();
-        int videoRawResourceId = video.getVideoResource();
-        String videoPath = "android.resource://" + requireActivity().getPackageName() + "/" + videoRawResourceId;
+        String videoPath = video.videoResource;
         videoView.setVideoPath(videoPath);
         videoView.start();
     }
