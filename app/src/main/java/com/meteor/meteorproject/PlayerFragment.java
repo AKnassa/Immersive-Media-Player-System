@@ -167,9 +167,9 @@ public class PlayerFragment extends Fragment {
         videoView.setMediaController(mediaController);
 
         videos = new ArrayList<>();
-        videos.add(new Video("Lecture 3", R.raw.v1, "5:20","/storage/emulated/0/video1.mp4"));
-        videos.add(new Video("Lecture 2", R.raw.v2, "5:20","/storage/emulated/0/video2.mp4"));
-        videos.add(new Video("Lecture 3", R.raw.v3, "5:20","/storage/emulated/0/video3.mp4"));
+        videos.add(new Video("Lecture 1", R.raw.v1, "5:20","vid1.mp4"));
+        videos.add(new Video("Lecture 2", R.raw.v2, "5:20","vid2.mp4"));
+        videos.add(new Video("Lecture 3", R.raw.v3, "5:20","vid3.mp4")); // /storage/emulated/0/
         //videos.add(new Video("Lecture 4", R.raw.v4, "5:20",R.raw.video4));
 
         // Initialize the ListView and set an adapter
@@ -179,11 +179,12 @@ public class PlayerFragment extends Fragment {
 
         // Handle item clicks in the ListView
         listView.setOnItemClickListener((parent, view1, position, id) -> {
+
             Video selectedVideo = videos.get(position);
             playVideo(selectedVideo);
             //Select video
-            String sendFile = videoResourceMap.get(selectedVideo.getVideoResource());
-
+            String sendFile = selectedVideo.getVideoResource();//videoResourceMap.get(selectedVideo.getVideoResource());
+            Log.d("VideoLoad","listView clicked: "+ position+","+sendFile);
             Log.d("FlagChkSelectVideo", "Selected File: " + sendFile);
             for (String sendCmd : ipList) {
                 sendStringToUnity(sendCmd, "file " + sendFile);
@@ -196,21 +197,20 @@ public class PlayerFragment extends Fragment {
 
 
         // Get the video file's resource identifier from the "res/raw" folder
-        int videoRawResourceId = R.raw.video1; // Replace "your_video" with your actual video file name
-
+//        int videoRawResourceId = R.raw.video1; // Replace "your_video" with your actual video file name
         // Set the video URI from the resource identifier
-        String videoPath = "android.resource://" + requireActivity().getPackageName() + "/" + videoRawResourceId;
+        String videoPath = "/storage/emulated/0/Movies/"+videos.get(0).videoResource; //"android.resource://" + requireActivity().getPackageName() + "/" + videoRawResourceId;
         videoView.setVideoURI(Uri.parse(videoPath));
 
-        try {
-            mediaPlayer.setDataSource(requireActivity(), Uri.parse(videoPath));
-            mediaPlayer.prepare();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // Start playing the video
-        mediaPlayer.start();
+//        try {
+//            mediaPlayer.setDataSource(requireActivity(), Uri.parse(videoPath));
+//            mediaPlayer.prepare();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        // Start playing the video
+//        mediaPlayer.start();
 
         // Start playing the video
         videoView.start();
@@ -233,9 +233,11 @@ public class PlayerFragment extends Fragment {
     // Play the selected video in the VideoView
     private void playVideo(Video video) {
         videoView.pause();
-        String videoPath = video.videoResource;
+        String videoPath = "/storage/emulated/0/Movies/" + video.videoResource;
+        Log.d("FlagChkSelectVideo", "Play Video: " + videoPath);
         videoView.setVideoPath(videoPath);
         videoView.start();
+
     }
     // Volume seekBar functionality
     private void updateVolume() {
