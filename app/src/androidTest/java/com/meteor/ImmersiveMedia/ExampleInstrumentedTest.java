@@ -1,4 +1,4 @@
-package com.meteor.meteorproject;
+package com.meteor.ImmersiveMedia;
 
 import android.content.Context;
 

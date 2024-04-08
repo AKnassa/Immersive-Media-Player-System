@@ -1,4 +1,4 @@
-package com.meteor.meteorproject;
+package com.meteor.ImmersiveMedia;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

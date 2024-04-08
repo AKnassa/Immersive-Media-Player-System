@@ -7,7 +7,7 @@ android {
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.meteor.meteorproject"
+        applicationId = "com.ImmersiveMedia"
         minSdk = 24
         targetSdk = 33
         versionCode = 1

@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MeteorProject"
+rootProject.name = "ImmersiveMedia"
 include(":app")

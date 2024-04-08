@@ -1,9 +1,8 @@
-package com.meteor.meteorproject;
+package com.meteor.ImmersiveMedia;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.ToggleButton;
-import android.widget.CompoundButton;
 import android.os.Handler;
 
 
@@ -25,24 +21,19 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.slider.Slider;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.net.Uri;
 import android.widget.MediaController;
 import android.widget.VideoView;
-import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import android.view.LayoutInflater;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
