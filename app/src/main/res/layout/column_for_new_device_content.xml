@@ -1,0 +1,84 @@
+<!-- calibrate_column_item.xml -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/columnNewDeviceContent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_box"
+    android:layout_marginLeft="16dp"
+    android:paddingBottom="16dp">
+
+    <!-- Header for the column -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerLayoutCalibrate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <!-- Guidelines for alignment -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_headset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.06" />
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_device_id_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.44" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_battery_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.63" />
+
+        <!-- DEVICE ID Header -->
+        <TextView
+            android:id="@+id/deviceIdHeaderCalibrate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:text="DEVICE ID"
+            android:paddingLeft="8dp"
+            android:textStyle="bold"
+            android:textColor="#9c9c9f"
+            app:layout_constraintStart_toEndOf="@id/guideline_headset"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_device_id_end"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- BATTERY Header -->
+        <TextView
+            android:id="@+id/batteryHeaderCalibrate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:text="BATTERY"
+            android:textStyle="bold"
+            android:textColor="#9c9c9f"
+            app:layout_constraintStart_toStartOf="@+id/guideline_device_id_end"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_battery_end"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- RecyclerView for the device rows -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/deviceRecyclerViewCalibrate"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerLayoutCalibrate"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

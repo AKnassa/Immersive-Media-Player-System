@@ -5,40 +5,97 @@
     android:layout_height="match_parent">
 
     <!-- Left Side Container -->
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/leftContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintEnd_toStartOf="@+id/rightContainer"
+        app:layout_constraintWidth_percent="0.6"
+        app:layout_constraintHeight_percent="1"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/rightContainer"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintWidth_percent="0.6">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <!-- Video Title -->
         <TextView
             android:id="@+id/videoTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="0dp"
             android:text="Lecture 1: Currently Playing"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="0.05"
+            app:layout_constraintVertical_bias="0.02" />
 
+        <!-- VideoView -->
         <!-- VideoView -->
         <VideoView
             android:id="@+id/videoPlayer"
             android:layout_width="0dp"
-            android:layout_height="300dp"
-            android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="0dp"
+            app:layout_constraintWidth_percent="1"
+            app:layout_constraintHeight_percent="0.44"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/videoTitle"
-            app:layout_constraintWidth_percent="1" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/videoTitle"
+            app:layout_constraintVertical_bias="0.05" />
+
+        <ImageView
+            android:id="@+id/videoPlaceholder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#EFEFEF"
+            android:padding="50dp"
+            android:layout_marginTop="28dp"
+            android:scaleType="centerInside"
+            app:layout_constraintBottom_toBottomOf="@+id/videoPlayer"
+            app:layout_constraintStart_toStartOf="@id/videoPlayer"
+            app:layout_constraintEnd_toEndOf="@id/videoPlayer"
+            app:layout_constraintTop_toTopOf="@id/videoPlayer"
+            />
+
+        <!-- Lottie Animation View -->
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieAnimation"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintEnd_toEndOf="@id/videoPlayer"
+            app:layout_constraintHeight_percent="0.28"
+            app:layout_constraintStart_toStartOf="@id/videoPlayer"
+            app:layout_constraintTop_toTopOf="@+id/videoPlayer"
+            app:layout_constraintBottom_toTopOf="@+id/animationText"
+            app:layout_constraintWidth_percent="1"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/player_initial_animation" />
+
+        <!-- TextView for Text Underneath Animation -->
+        <TextView
+            android:id="@+id/animationText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ready to dive in?"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@id/lottieAnimation"
+            app:layout_constraintStart_toStartOf="@id/lottieAnimation"
+            app:layout_constraintTop_toBottomOf="@+id/lottieAnimation" />
+
+        <TextView
+            android:id="@+id/subtitleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select a Video to start your journey"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="#991D192B"
+            android:gravity="center"
+            android:layout_marginTop="4dp"
+            app:layout_constraintTop_toBottomOf="@+id/animationText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
 
         <!-- Background Color View -->
         <View
@@ -46,10 +103,10 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="#FEF7FF"
-            app:layout_constraintTop_toBottomOf="@+id/videoPlayer"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/videoPlayer"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
 
         <!--Lock Icon -->
@@ -57,7 +114,7 @@
             android:id="@+id/lockIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="8dp"
             android:background="@null"
             android:src="@drawable/baseline_lock_open_24"
             app:layout_constraintEnd_toEndOf="@+id/progressBar"
@@ -71,7 +128,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="8dp"
             android:text="Live"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lockIcon" />
@@ -81,7 +138,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -94,19 +151,19 @@
             android:id="@+id/iconsContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="@+id/progressBar"
             app:layout_constraintTop_toBottomOf="@+id/progressBar">
 
             <ImageButton
-            android:id="@+id/playIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:background="?android:selectableItemBackground"
-            android:contentDescription="Pause Icon"
-            android:src="@drawable/baseline_pause_24" />
+                android:id="@+id/playIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:background="?android:selectableItemBackground"
+                android:contentDescription="Pause Icon"
+                android:src="@drawable/baseline_pause_24" />
 
             <ImageButton
                 android:id="@+id/replayIcon"
@@ -125,7 +182,7 @@
             android:id="@+id/seekButtonsLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="64dp"
             android:layout_marginLeft="16dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
@@ -173,7 +230,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:valueFrom="0.0"
             android:valueTo="100.0"
@@ -186,7 +243,7 @@
             android:id="@+id/buttonVolumeRow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="32dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
@@ -252,43 +309,70 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- Right Side Container -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/rightContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintStart_toEndOf="@+id/leftContainer"
+        app:layout_constraintWidth_percent="0.3"
+        app:layout_constraintHeight_percent="1"
+        app:layout_constraintStart_toEndOf="@id/leftContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintWidth_percent="0.3">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <!-- Title for video list -->
         <TextView
             android:id="@+id/videoListTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:text="Video List"
+            android:text="Select a Video"
             android:textStyle="bold"
-            app:layout_goneMarginTop="32dp"
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="0.05" />
 
         <!-- ListView of the videos -->
         <ListView
             android:id="@+id/videoListView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="16dp"
+            app:layout_constraintHeight_percent="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/videoListTitle"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/videoListTitle"
             android:dividerHeight="0dp"
             android:divider="@android:color/darker_gray" />
 
+        <!-- Title for chapters list -->
+        <TextView
+            android:id="@+id/chaptersTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chapters"
+            android:textSize="20sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/videoListView" />
+
+        <!-- RecyclerView for the chapters -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chaptersRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/chaptersTitle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,105 @@
+<!-- new_device_content.xml -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/calibrated_device_content_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_box"
+    android:padding="16dp">
+
+
+    <!-- Rounded Box Container -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/roundedBoxListDropCalibrated"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_box"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- RadioButton with Text -->
+        <CheckBox
+            android:id="@+id/checkBoxCalibrate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:text="0 Selected"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Calibrate Device Button -->
+        <Button
+            android:id="@+id/reCalibrateButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Re-Calibrate Device"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- COLUMN 1 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/firstColumnContainerCalibrated"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_box"
+            android:paddingBottom="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/checkBoxCalibrate">
+
+            <!-- Header for the column, structured like column_item.xml -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/headerLayoutCalibrated"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <!-- DEVICE ID Header -->
+                <TextView
+                    android:id="@+id/header_device_id_calibrated"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="DEVICE ID"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/header_battery_calibrated" />
+
+                <!-- BATTERY Header -->
+                <TextView
+                    android:id="@+id/header_battery_calibrated"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="BATTERY"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/header_device_id_calibrated"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- RecyclerView for the device rows -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/deviceRecyclerViewCalibrated"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/headerLayoutCalibrated" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

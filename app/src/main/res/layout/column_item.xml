@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/columnLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    android:background="@drawable/rounded_box"
+    >
+
+    <!-- Guidelines to divide layout into equal parts -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_device_id_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.40" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_battery_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.63" />
+
+    <!-- DEVICE ID Header -->
+    <TextView
+        android:id="@+id/deviceIdHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="DEVICE ID"
+        android:textAlignment="viewStart"
+        android:paddingTop="4dp"
+        android:paddingLeft="16dp"
+        android:gravity="start|center_vertical"
+        android:textStyle="bold"
+        android:textColor="#9c9c9f"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_device_id_end"
+        app:layout_constraintTop_toTopOf="parent"
+         />
+
+    <!-- BATTERY Header -->
+    <TextView
+        android:id="@+id/batteryHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="BATTERY"
+        android:paddingTop="4dp"
+        android:textAlignment="viewStart"
+        android:gravity="start|center_vertical"
+        android:textStyle="bold"
+        android:textColor="#9c9c9f"
+        app:layout_constraintStart_toStartOf="@+id/guideline_device_id_end"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_battery_end"
+        app:layout_constraintTop_toTopOf="parent"
+         />
+
+    <!-- STATUS Header -->
+    <TextView
+        android:id="@+id/statusHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="STATUS"
+        android:paddingTop="4dp"
+        android:textAlignment="viewStart"
+        android:gravity="start|center_vertical"
+        android:textStyle="bold"
+        android:textColor="#9c9c9f"
+        app:layout_constraintStart_toStartOf="@+id/guideline_battery_end"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+
+
+    <!-- RecyclerView for the device rows -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/deviceRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toBottomOf="@+id/deviceIdHeader"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

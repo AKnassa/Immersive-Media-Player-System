@@ -35,7 +35,8 @@ dependencies {
     implementation ("com.google.android.material:material:1.x.x")
     implementation ("com.google.android.material:material:1.4.0")
     implementation ("com.google.android.material:material:<latest_version>")
-
+    // Lottie for Android by Airbnb
+    implementation ("com.airbnb.android:lottie:5.2.0")
 
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")

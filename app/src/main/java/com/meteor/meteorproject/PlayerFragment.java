@@ -27,6 +27,8 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,8 +43,75 @@ import java.net.Socket;
 
 import android.view.LayoutInflater;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+
+
+// Inner class for Chapters
+class Chapter {
+    String lectureName;
+    String time;
+    String title;
+
+    Chapter(String lectureName, String time, String title) {
+        this.lectureName = lectureName;
+        this.time = time;
+        this.title = title;
+    }
+
+    // Getters
+    public String getLectureName() { return lectureName; }
+    public String getTime() { return time; }
+    public String getTitle() { return title; }
+}
+
+// Adapter class for RecyclerView to display chapters
+class ChaptersAdapter extends RecyclerView.Adapter<ChaptersAdapter.ViewHolder> {
+    private final List<Chapter> chapters;
+
+    ChaptersAdapter(List<Chapter> chapters) {
+        this.chapters = chapters;
+    }
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chapter_item_layout, parent, false);
+        return new ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Chapter chapter = chapters.get(position);
+        holder.timeTextView.setText(chapter.getTime());
+        holder.titleTextView.setText(chapter.getTitle());
+    }
+
+    @Override
+    public int getItemCount() {
+        return chapters.size();
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView timeTextView;
+        TextView titleTextView;
+
+        ViewHolder(View itemView) {
+            super(itemView);
+            timeTextView = itemView.findViewById(R.id.chapterTime); // ID in your chapter_item_layout.xml
+            titleTextView = itemView.findViewById(R.id.chapterTitle); // ID in your chapter_item_layout.xml
+        }
+    }
+}
+
+
+
 
 class Video {
     String title;
@@ -107,12 +176,18 @@ class VideoAdapter extends ArrayAdapter<Video> {
 public class PlayerFragment extends Fragment {
 
     private VideoView videoView;
+    private ImageView videoPlaceholder;
     private MediaPlayer mediaPlayer;
     private float currentVolume = 1.0f;
     private MediaController mediaController;
     private List<Video> videos;
     List<String> ipList = new ArrayList<>();
     private com.google.android.material.progressindicator.LinearProgressIndicator progressBar;
+
+    private List<Chapter> chaptersList = new ArrayList<>(); // Initialize chapters list
+    private ChaptersAdapter chaptersAdapter; // Declare the adapter
+
+
 
 
     // LiveBar:
@@ -125,31 +200,62 @@ public class PlayerFragment extends Fragment {
         }
     };
 
+    /*public PlayerFragment() {
+        ipList.add("10.173.163.201"); //Personal HS
+        ipList.add("10.173.163.33"); //C7 ActOne Router
+        ipList.add("10.173.163.35"); //C1 ActOne Router
+        ipList.add("192.168.137.132"); //C1 Home
+        ipList.add("192.168.137.174"); //Personal Home
+
+        progressBar = null; // initialized in onCreateView
+    }*/
     public PlayerFragment() {
-        //ipList.add("172.20.10.3");
-        //ipList.add("192.168.0.21")
-        ipList.add("192.168.0.24");
-        ipList.add("192.168.0.23");
-        ipList.add("192.168.0.20");
+
+        Log.d("IPList","Ips: Log IPs\n");
+
+        String csvFile = "/storage/emulated/0/Movies/DeviceIP.csv"; // Replace with the actual path to your CSV file
+
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                // Split the line by tab (assuming your CSV is tab-separated)
+                String[] data = line.split(",");
+
+                // Ensure that the line has at least two columns (ID and IPs)
+                if (data.length >= 2) {
+                    // Assuming IPs are in the second column
+                    String ip = data[1].trim();
+                    ipList.add(ip);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Print the contents of ipList
+        for (String ip : ipList) {
+            Log.d("IPList","Ips: "+ ip +"\n");
+        }
+
         progressBar = null; // initialized in onCreateView
     }
-    //    String unityServerIp = "192.168.0.187"; // Set the IP address dynamically
     String unityServerIp = "192.168.0.203"; // Set the IP address dynamically
-    //String unityServerIp1 = "172.20.10.7"; // Set the IP address dynamically
 
     private boolean isLocked = false;  // Add this to keep track of the lock state
     private boolean isPlaying = true;  // to keep track of play/pause state
     private boolean isSwitchOn = false;  // default state is off
 
     //Files with their IDs.
-    private static final SparseArray<String> videoResourceMap = new SparseArray<>();
+    /*private static final SparseArray<String> videoResourceMap = new SparseArray<>();
 
     static {
         videoResourceMap.put(R.raw.video1, "video1");
         videoResourceMap.put(R.raw.video2, "video2");
         videoResourceMap.put(R.raw.video3, "video3");
-        //videoResourceMap.put(R.raw.video4, "video4");
-    }
+    }*/
+
+
+
 
     @Nullable
     @Override
@@ -160,11 +266,14 @@ public class PlayerFragment extends Fragment {
 
         // Initialize VideoView
         videoView = view.findViewById(R.id.videoPlayer);
+        videoPlaceholder = view.findViewById(R.id.videoPlaceholder);
+
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-        mediaController = new MediaController(requireContext());
-        videoView.setMediaController(mediaController);
+        // Default MediaController
+        //mediaController = new MediaController(requireContext());
+        //videoView.setMediaController(mediaController);
 
         videos = new ArrayList<>();
         videos.add(new Video("Lecture 1", R.raw.v1, "5:20","vid1.mp4"));
@@ -182,6 +291,15 @@ public class PlayerFragment extends Fragment {
 
             Video selectedVideo = videos.get(position);
             playVideo(selectedVideo);
+
+            // Disable animation
+            View lottieAnimationView = view.findViewById(R.id.lottieAnimation);
+            TextView animationText = view.findViewById(R.id.animationText);
+            TextView subtitleText = view.findViewById(R.id.subtitleText);
+            lottieAnimationView.setVisibility(View.GONE);
+            animationText.setVisibility(View.GONE);
+            subtitleText.setVisibility(View.GONE);
+
             //Select video
             String sendFile = selectedVideo.getVideoResource();//videoResourceMap.get(selectedVideo.getVideoResource());
             Log.d("VideoLoad","listView clicked: "+ position+","+sendFile);
@@ -190,17 +308,27 @@ public class PlayerFragment extends Fragment {
                 sendStringToUnity(sendCmd, "file " + sendFile);
             }
             //sendStringToUnity(unityServerIp, "file " + sendFile);
-            //sendStringToUnity(unityServerIp1, "file " + sendFile);
 
             updateNewVideoUI();
         });
 
+        // Initialize RecyclerView for chapters
+        RecyclerView chaptersRecyclerView = view.findViewById(R.id.chaptersRecyclerView);
+        chaptersRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity())); // Use getActivity() here
+        chaptersAdapter = new ChaptersAdapter(chaptersList);
+        chaptersRecyclerView.setAdapter(chaptersAdapter);
+
+        loadChaptersFromCSV(); // This will populate chaptersList and update the adapter
+
+
 
         // Get the video file's resource identifier from the "res/raw" folder
-//        int videoRawResourceId = R.raw.video1; // Replace "your_video" with your actual video file name
+        // int videoRawResourceId = R.raw.video1; // Replace "your_video" with your actual video file name
         // Set the video URI from the resource identifier
-        String videoPath = "/storage/emulated/0/Movies/"+videos.get(0).videoResource; //"android.resource://" + requireActivity().getPackageName() + "/" + videoRawResourceId;
-        videoView.setVideoURI(Uri.parse(videoPath));
+
+        // Auto play when player screen is launched
+        //String videoPath = "/storage/emulated/0/Movies/"+videos.get(0).videoResource; //"android.resource://" + requireActivity().getPackageName() + "/" + videoRawResourceId;
+        //videoView.setVideoURI(Uri.parse(videoPath));
 
 //        try {
 //            mediaPlayer.setDataSource(requireActivity(), Uri.parse(videoPath));
@@ -213,10 +341,53 @@ public class PlayerFragment extends Fragment {
 //        mediaPlayer.start();
 
         // Start playing the video
-        videoView.start();
-
         return view;
     }
+
+    private void loadChaptersFromCSV() {
+        // Clear the list to avoid duplicating items if this method is called more than once
+        chaptersList.clear();
+
+        InputStream inputStream = getResources().openRawResource(R.raw.chapters);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        try {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Skip empty lines or headers if necessary
+                if(line.trim().isEmpty() || line.startsWith("#")) continue;
+
+                String[] tokens = line.split(",\\s*");
+                if (tokens.length >= 3) {
+                    chaptersList.add(new Chapter(tokens[0].trim(), tokens[1].trim(), tokens[2].trim()));
+                }
+            }
+        } catch (IOException e) {
+            Log.e("PlayerFragment", "Error loading chapters from CSV", e);
+        } finally {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                Log.e("PlayerFragment", "Error closing stream", e);
+            }
+        }
+
+        chaptersAdapter.notifyDataSetChanged();
+    }
+
+    private void setupVideoListView(View view) {
+        ListView listView = view.findViewById(R.id.videoListView);
+        VideoAdapter adapter = new VideoAdapter(requireContext(), videos);
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener((parent, view1, position, id) -> {
+            Video selectedVideo = videos.get(position);
+            playVideo(selectedVideo);
+            // ... [Other click handling logic]
+        });
+    }
+
+
 
     private void updateNewVideoUI() {
         // Reset the seek bar
@@ -232,12 +403,13 @@ public class PlayerFragment extends Fragment {
 
     // Play the selected video in the VideoView
     private void playVideo(Video video) {
+        videoPlaceholder.setVisibility(View.GONE);
         videoView.pause();
         String videoPath = "/storage/emulated/0/Movies/" + video.videoResource;
         Log.d("FlagChkSelectVideo", "Play Video: " + videoPath);
         videoView.setVideoPath(videoPath);
-        videoView.start();
 
+        videoView.start();
     }
     // Volume seekBar functionality
     private void updateVolume() {
@@ -304,6 +476,7 @@ public class PlayerFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
         final com.google.android.material.slider.Slider seekBar = view.findViewById(R.id.seekBar);
         final LinearLayout buttonLayout = view.findViewById(R.id.buttonLayout);
         final Button syncNowButton = view.findViewById(R.id.syncNowButton);
@@ -312,6 +485,7 @@ public class PlayerFragment extends Fragment {
 
         // LiveBar: Start updating the progress
         handler.post(updateProgressRunnable);
+
 
         // Store the original value of the Slider to reset it when "Cancel" is clicked
         final float[] originalValue = {seekBar.getValue()};
@@ -342,7 +516,6 @@ public class PlayerFragment extends Fragment {
                         sendStringToUnity(sendCmd, "pause");
                     }
                     //sendStringToUnity(unityServerIp, "pause");
-                    //sendStringToUnity(unityServerIp1, "pause");
                     videoView.pause(); // Pause the video
                     mediaPlayer.pause();
 
@@ -353,7 +526,6 @@ public class PlayerFragment extends Fragment {
                         sendStringToUnity(sendCmd, "play");
                     }
                     //sendStringToUnity(unityServerIp, "play");
-                    //sendStringToUnity(unityServerIp1, "play");
                     videoView.start(); // Start or resume the video
                 }
                 isPlaying = !isPlaying;
@@ -388,7 +560,6 @@ public class PlayerFragment extends Fragment {
                     sendStringToUnity(sendCmd, "rewind");
                 }
                 //sendStringToUnity(unityServerIp, "rewind");
-                //sendStringToUnity(unityServerIp1, "rewind");
 
                 // If you have video controls, add your replay logic here
             }
@@ -420,10 +591,10 @@ public class PlayerFragment extends Fragment {
                 int videoDuration = videoView.getDuration();
                 int seekTime = (int) ((selectedTime / 100) * videoDuration);
 
-                // Seek the video to the calculated time
+                // Seek the video to the desired time
                 videoView.seekTo(seekTime);
 
-                // Calculate the time to seek to in seconds
+                // seek timing in seconds
                 int seekTimeInMilliseconds = (int) ((selectedTime / 100) * videoDuration);
                 int seekTimeInSeconds = seekTimeInMilliseconds / 1000; // Convert to seconds
                 //Log.d("FlagChkSeekBar", "Jump to: " + seekTimeInSeconds);
@@ -431,8 +602,6 @@ public class PlayerFragment extends Fragment {
                     sendStringToUnity(sendCmd, "jumptotime " + seekTimeInSeconds);
                 }
                 //sendStringToUnity(unityServerIp, "jumptotime " + seekTimeInSeconds);
-                //sendStringToUnity(unityServerIp1, "jumptotime " + seekTimeInSeconds);
-
                 // Hide the button layout
                 buttonLayout.setVisibility(View.GONE);
             }
@@ -480,7 +649,6 @@ public class PlayerFragment extends Fragment {
             progressBar.setProgressCompat(progress, true);
         }
     }
-
 
     public void sendStringToUnity(String serverIp, String message) {
         new Thread(new Runnable() {
