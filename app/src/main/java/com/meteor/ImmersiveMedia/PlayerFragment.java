@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.slider.Slider;
+import com.meteor.meteorproject.R;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;

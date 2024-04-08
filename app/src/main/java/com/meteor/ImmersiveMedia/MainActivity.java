@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.widget.Toolbar;  // Make sure to import this
 import com.google.android.material.navigationrail.NavigationRailView;
+import com.meteor.meteorproject.R;
 
 public class MainActivity extends AppCompatActivity {
 

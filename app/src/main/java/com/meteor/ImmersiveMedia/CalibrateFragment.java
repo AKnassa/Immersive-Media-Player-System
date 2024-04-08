@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.meteor.meteorproject.R;
 
 
 public class CalibrateFragment extends Fragment implements DeviceAdapter.DeviceInteractionListener {
